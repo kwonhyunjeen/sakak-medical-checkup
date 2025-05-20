@@ -1,4 +1,3 @@
-import "./App.css";
 import { cn } from "./utils/cn";
 
 function App() {
