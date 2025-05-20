@@ -12,7 +12,6 @@ export type GetMedicalCheckupAPIRequestBody = {
   startDate: string;
   endDate: string;
   inquiryType?: InquiryType;
-  isContinue: "1"; // OK
   multiFactorInfo: MultiFactorInfo;
 };
 
@@ -83,3 +82,20 @@ export type GetMedicalCheckupAPIResponseBody = APISuccessResponse<{
     infantsDentalList: unknown[];
   }[];
 }>;
+
+export const getMedicalCheckup = async (
+  body: GetMedicalCheckupAPIRequestBody,
+): Promise<GetMedicalCheckupAPIResponseBody> => {
+  const response = await fetch("/candiy-api/v1/nhis/checkup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": import.meta.env.VITE_CANDIY_API_KEY,
+    },
+    body: JSON.stringify({
+      ...body,
+      isContinue: "1", // OK
+    }),
+  });
+  return (await response.json()) as GetMedicalCheckupAPIResponseBody;
+};

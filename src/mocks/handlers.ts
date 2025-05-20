@@ -8,7 +8,9 @@ import type { MultiFactorInfo } from "../schemas/auth";
 
 export const handlers = [
   http.post("http://localhost:5173/candiy-api/v1/nhis/checkup", async ({ request }) => {
-    const body = (await request.json()) as RequestMedicalCheckupAuthAPIRequestBody | GetMedicalCheckupAPIRequestBody;
+    const body = (await request.json()) as
+      | (RequestMedicalCheckupAuthAPIRequestBody & { isContinue: "0" })
+      | (GetMedicalCheckupAPIRequestBody & { isContinue: "1" });
 
     // requestMedicalCheckupAuth
     if (body.isContinue === "0") {

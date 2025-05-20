@@ -12,7 +12,23 @@ export type RequestMedicalCheckupAuthAPIRequestBody = {
   startDate: string;
   endDate: string;
   inquiryType?: InquiryType;
-  isContinue: "0"; // Cancel
 };
 
 export type RequestMedicalCheckupAuthAPIResponseBody = APISuccessResponse<MultiFactorInfo>;
+
+export const requestMedicalCheckupAuth = async (
+  body: RequestMedicalCheckupAuthAPIRequestBody,
+): Promise<RequestMedicalCheckupAuthAPIResponseBody> => {
+  const response = await fetch("/candiy-api/v1/nhis/checkup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": import.meta.env.VITE_CANDIY_API_KEY,
+    },
+    body: JSON.stringify({
+      ...body,
+      isContinue: "0", // Cancel
+    }),
+  });
+  return (await response.json()) as RequestMedicalCheckupAuthAPIResponseBody;
+};
