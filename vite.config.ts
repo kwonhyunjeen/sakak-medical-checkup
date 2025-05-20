@@ -15,4 +15,13 @@ export default defineConfig({
     }),
     react(),
   ],
+  server: {
+    proxy: {
+      "/candiy-api": {
+        target: "https://api.candiy.io",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/candiy-api/, ""),
+      },
+    },
+  },
 });

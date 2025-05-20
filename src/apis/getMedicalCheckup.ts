@@ -12,7 +12,7 @@ export type GetMedicalCheckupAPIRequestBody = {
   startDate: string;
   endDate: string;
   inquiryType?: InquiryType;
-  isContinue?: "1"; // OK
+  isContinue: "1"; // OK
   multiFactorInfo: MultiFactorInfo;
 };
 
@@ -22,7 +22,8 @@ export type GetMedicalCheckupAPIResponseBody = APISuccessResponse<{
     checkupDate: string;
     height: string;
     weight: string;
-    waists: string;
+    /** @todo 문서와 프로퍼티명이 다름 (waists) */
+    waist: string;
     BMI: string;
     vision: string;
     hearing: string;
@@ -47,7 +48,8 @@ export type GetMedicalCheckupAPIResponseBody = APISuccessResponse<{
     refType: string;
     height: string;
     weight: string;
-    waists: string;
+    /** @todo 문서와 프로퍼티명이 다름 (waists) */
+    waist: string;
     BMI: string;
     vision: string;
     hearing: string;
@@ -68,11 +70,16 @@ export type GetMedicalCheckupAPIResponseBody = APISuccessResponse<{
     osteoporosis: string;
   }[];
   resultList: {
-    caseType: string;
+    /** @todo 문서와 타입이 다름 (string) */
+    caseType: number;
     checkupType: string;
     checkupDate: string;
     organizationName: string;
     pdfData: string;
     questionnaire: unknown[];
+    /** @todo 문서에 존재하지 않음 */
+    infantsCheckupList: unknown[];
+    /** @todo 문서에 존재하지 않음 */
+    infantsDentalList: unknown[];
   }[];
 }>;

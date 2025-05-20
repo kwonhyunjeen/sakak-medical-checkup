@@ -7,7 +7,7 @@ import unicorn from "eslint-plugin-unicorn";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "dist-ssr"] },
+  { ignores: ["dist", "dist-ssr", "**/mockServiceWorker.js"] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   unicorn.configs.recommended,

@@ -12,7 +12,7 @@ export type RequestMedicalCheckupAuthAPIRequestBody = {
   startDate: string;
   endDate: string;
   inquiryType?: InquiryType;
-  isContinue?: "0"; // Cancel
+  isContinue: "0"; // Cancel
 };
 
 export type RequestMedicalCheckupAuthAPIResponseBody = APISuccessResponse<MultiFactorInfo>;
