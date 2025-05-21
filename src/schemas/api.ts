@@ -60,4 +60,6 @@ export type APIErrorCode =
   | "SE-012"
   | "DB-001"
   | "DB-002"
-  | "DB-003";
+  | "DB-003"
+  // 프론트엔드에서의 예외 처리를 위한 코드
+  | "FRONTEND-999";
