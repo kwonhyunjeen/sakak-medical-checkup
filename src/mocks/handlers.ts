@@ -1,18 +1,18 @@
 import { http, HttpResponse } from "msw";
 import type { GetMedicalCheckupAPIRequestBody, GetMedicalCheckupAPIResponseBody } from "../apis/getMedicalCheckup";
 import type {
-  RequestMedicalCheckupAuthAPIRequestBody,
-  RequestMedicalCheckupAuthAPIResponseBody,
-} from "../apis/requestMedicalCheckupAuth";
+  RequestMultiFactorAuthAPIRequestBody,
+  RequestMultiFactorAuthAPIResponseBody,
+} from "../apis/requestMultiFactorAuth";
 import type { MultiFactorInfo } from "../schemas/auth";
 
 export const handlers = [
   http.post("http://localhost:5173/candiy-api/v1/nhis/checkup", async ({ request }) => {
     const body = (await request.json()) as
-      | (RequestMedicalCheckupAuthAPIRequestBody & { isContinue: "0" })
+      | (RequestMultiFactorAuthAPIRequestBody & { isContinue: "0" })
       | (GetMedicalCheckupAPIRequestBody & { isContinue: "1" });
 
-    // requestMedicalCheckupAuth
+    // requestMultiFactorAuth
     if (body.isContinue === "0") {
       const mockMultiFactorInfo: MultiFactorInfo = {
         transactionId: "62a8f9b3-21cd-47e5-9c18-f834d59b7da2",
@@ -24,7 +24,7 @@ export const handlers = [
       return HttpResponse.json({
         status: "success",
         data: mockMultiFactorInfo,
-      } satisfies RequestMedicalCheckupAuthAPIResponseBody);
+      } satisfies RequestMultiFactorAuthAPIResponseBody);
     }
 
     // getMedicalCheckup

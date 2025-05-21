@@ -2,7 +2,7 @@ import type { APISuccessResponse } from "../schemas/api";
 import type { LoginTypeLevel, MultiFactorInfo, Telecom } from "../schemas/auth";
 import type { InquiryType } from "../schemas/medicalCheckup";
 
-export type RequestMedicalCheckupAuthAPIRequestBody = {
+export type RequestMultiFactorAuthAPIRequestBody = {
   id: string;
   loginTypeLevel: LoginTypeLevel;
   legalName: string;
@@ -14,11 +14,11 @@ export type RequestMedicalCheckupAuthAPIRequestBody = {
   inquiryType?: InquiryType;
 };
 
-export type RequestMedicalCheckupAuthAPIResponseBody = APISuccessResponse<MultiFactorInfo>;
+export type RequestMultiFactorAuthAPIResponseBody = APISuccessResponse<MultiFactorInfo>;
 
-export const requestMedicalCheckupAuth = async (
-  body: RequestMedicalCheckupAuthAPIRequestBody,
-): Promise<RequestMedicalCheckupAuthAPIResponseBody> => {
+export const requestMultiFactorAuth = async (
+  body: RequestMultiFactorAuthAPIRequestBody,
+): Promise<RequestMultiFactorAuthAPIResponseBody> => {
   const response = await fetch("/candiy-api/v1/nhis/checkup", {
     method: "POST",
     headers: {
@@ -30,5 +30,5 @@ export const requestMedicalCheckupAuth = async (
       isContinue: "0", // Cancel
     }),
   });
-  return (await response.json()) as RequestMedicalCheckupAuthAPIResponseBody;
+  return (await response.json()) as RequestMultiFactorAuthAPIResponseBody;
 };

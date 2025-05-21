@@ -1,4 +1,4 @@
-import { requestMedicalCheckupAuth } from "./apis/requestMedicalCheckupAuth";
+import { requestMultiFactorAuth } from "./apis/requestMultiFactorAuth";
 import { getMedicalCheckup } from "./apis/getMedicalCheckup";
 import { TextField } from "./components/ui/TextField";
 import { Select, SelectOption } from "./components/ui/Select";
@@ -13,9 +13,9 @@ function App() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await requestMedicalCheckupAuth({});
+      const response = await requestMultiFactorAuth({});
       setMultiFactorInfo(response.data);
-      console.log("requestMedicalCheckupAuth:", response);
+      console.log("requestMultiFactorAuth:", response);
     } catch (error) {
       console.error(error);
     }
