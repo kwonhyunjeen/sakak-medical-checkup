@@ -3,6 +3,7 @@ import { getMedicalCheckup } from "./apis/getMedicalCheckup";
 import { TextField } from "./components/ui/TextField";
 import { Select, SelectOption } from "./components/ui/Select";
 import { Button } from "./components/ui/Button";
+import { Alert } from "./components/ui/Alert";
 import { startTransition, useActionState } from "react";
 import type { APIErrorResponse } from "./schemas/api";
 import type { LoginTypeLevel, Telecom } from "./schemas/auth";
@@ -101,6 +102,8 @@ function App() {
 
   return (
     <>
+      {mfaResponse?.status === "error" && <Alert variant="error">{mfaResponse.message}</Alert>}
+      {medicalCheckupResponse?.status === "error" && <Alert variant="error">{medicalCheckupResponse.message}</Alert>}
       <form onSubmit={handleSubmit(handleMFAFormSubmit)}>
         <TextField
           label="이름"
