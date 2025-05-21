@@ -4,7 +4,8 @@ import { TextField } from "./components/ui/TextField";
 import { Select, SelectOption } from "./components/ui/Select";
 import { Button } from "./components/ui/Button";
 import { Alert } from "./components/ui/Alert";
-import { startTransition, useActionState } from "react";
+import { Dialog } from "./components/ui/Dialog";
+import { startTransition, useActionState, useState } from "react";
 import type { APIErrorResponse } from "./schemas/api";
 import type { LoginTypeLevel, Telecom } from "./schemas/auth";
 import { useForm } from "react-hook-form";
@@ -56,12 +57,16 @@ function App() {
 
   const startYear = watch("startDate");
 
+  const [mfaDialogOpen, setMFADialogOpen] = useState(false);
+
   const [mfaResponse, dispatchMFA, isMFAPending] = useActionState(async () => {
     try {
-      return await requestMultiFactorAuth({
+      const response = await requestMultiFactorAuth({
         ...getValues(),
         id: MFA_SESSION_ID,
       });
+      setMFADialogOpen(response.status === "success");
+      return response;
     } catch (error) {
       return error as APIErrorResponse;
     }
@@ -76,11 +81,13 @@ function App() {
           code: "FRONTEND-999",
         } satisfies APIErrorResponse;
       }
-      return await getMedicalCheckup({
+      const response = await getMedicalCheckup({
         ...getValues(),
         id: MFA_SESSION_ID,
         multiFactorInfo: mfaResponse.data,
       });
+      setMFADialogOpen(false);
+      return response;
     } catch (error) {
       return error as APIErrorResponse;
     }
@@ -199,14 +206,21 @@ function App() {
         <Button type="submit" variant="primary" loading={isMFAPending} disabled={!isDirty}>
           건강검진 조회
         </Button>
-        {mfaResponse?.status === "success" && (
-          <>
-            <p>간편 인증을 마치고, 인증 완료 버튼을 눌러주세요.</p>
-            <Button variant="primary" loading={isMedicalCheckupPending} onClick={handleMFACompleteClick}>
-              인증 완료
-            </Button>
-          </>
-        )}
+        <Dialog open={mfaDialogOpen} onClose={() => setMFADialogOpen(false)}>
+          {() => (
+            <>
+              <p>간편 인증을 마치고, 인증 완료 버튼을 눌러주세요.</p>
+              <Button
+                variant="primary"
+                className="mt-4"
+                loading={isMedicalCheckupPending}
+                onClick={handleMFACompleteClick}
+              >
+                인증 완료
+              </Button>
+            </>
+          )}
+        </Dialog>
       </form>
       <hr />
       <h2>
