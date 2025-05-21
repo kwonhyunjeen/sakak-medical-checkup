@@ -25,16 +25,12 @@ export const Select = forwardRef<SelectRef, SelectProps>((props, ref) => {
   } = props;
 
   return (
-    <label className={cn("form-control w-full max-w-xs font-semibold", className)}>
+    <label className={cn("form-control w-full font-semibold", className)}>
       <span className="label">
         <span className="label-text">{label}</span>
         {description && <span className="label-text-alt">{description}</span>}
       </span>
-      <select
-        className={cn("select select-bordered w-full max-w-xs", error && "select-error")}
-        ref={ref}
-        {...selectProps}
-      >
+      <select className={cn("select select-bordered w-full", error && "select-error")} ref={ref} {...selectProps}>
         {children}
       </select>
       <span className="label">{error && <span className="label-text-alt text-error">{error}</span>}</span>

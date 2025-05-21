@@ -38,7 +38,7 @@ function App() {
   const {
     register,
     getValues,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
     watch,
   } = useForm<FormValues>({
@@ -101,7 +101,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="mx-auto max-w-sm p-4">
       {mfaResponse?.status === "error" && <Alert variant="error">{mfaResponse.message}</Alert>}
       {medicalCheckupResponse?.status === "error" && <Alert variant="error">{medicalCheckupResponse.message}</Alert>}
       <form onSubmit={handleSubmit(handleMFAFormSubmit)}>
@@ -196,13 +196,13 @@ function App() {
           <SelectOption value="10">하나은행(하나인증서)</SelectOption>
           <SelectOption value="11">NH모바일인증서</SelectOption>
         </Select>
-        <Button type="submit" variant="primary" disabled={isMFAPending}>
+        <Button type="submit" variant="primary" loading={isMFAPending} disabled={!isDirty}>
           건강검진 조회
         </Button>
         {mfaResponse?.status === "success" && (
           <>
             <p>간편 인증을 마치고, 인증 완료 버튼을 눌러주세요.</p>
-            <Button variant="primary" disabled={isMedicalCheckupPending} onClick={handleMFACompleteClick}>
+            <Button variant="primary" loading={isMedicalCheckupPending} onClick={handleMFACompleteClick}>
               인증 완료
             </Button>
           </>
@@ -217,7 +217,7 @@ function App() {
           <code>{JSON.stringify(medicalCheckupResponse.data)}</code>
         </pre>
       )}
-    </>
+    </div>
   );
 }
 

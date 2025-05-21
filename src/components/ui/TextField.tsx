@@ -21,14 +21,14 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props, ref) =
   } = props;
 
   return (
-    <label className={cn("form-control w-full max-w-xs font-semibold", className)}>
+    <label className={cn("form-control w-full font-semibold", className)}>
       <span className="label">
         <span className="label-text">{label}</span>
         {description && <span className="label-text-alt">{description}</span>}
       </span>
       <input
         type="text"
-        className={cn("input input-bordered w-full max-w-xs", error && "input-error")}
+        className={cn("input input-bordered w-full", error && "input-error")}
         ref={ref}
         {...inputProps}
       />
