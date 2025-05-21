@@ -1,7 +1,9 @@
 import { useEffect } from "react";
-import { cn } from "./utils/cn";
 import { requestMedicalCheckupAuth } from "./apis/requestMedicalCheckupAuth";
 import { getMedicalCheckup } from "./apis/getMedicalCheckup";
+import { TextField } from "./components/ui/TextField";
+import { Select, SelectOption } from "./components/ui/Select";
+import { Button } from "./components/ui/Button";
 
 function App() {
   // TODO: API Mocking 확인 후 제거
@@ -22,7 +24,22 @@ function App() {
     })();
   }, []);
 
-  return <h1 className={cn("text-3xl font-bold underline")}>Hello world!</h1>;
+  return (
+    <>
+      <TextField label="Label" placeholder="Input text" description="Description" error="Error message" />
+      <Select label="Label" description="Description" error="Error message">
+        <SelectOption disabled selected>
+          Select item
+        </SelectOption>
+        <SelectOption value="1">Option 1</SelectOption>
+        <SelectOption value="2">Option 2</SelectOption>
+        <SelectOption value="3">Option 3</SelectOption>
+      </Select>
+      <Button variant="default">Button</Button>
+      <Button variant="primary">Button</Button>
+      <Button variant="error">Button</Button>
+    </>
+  );
 }
 
 export default App;
