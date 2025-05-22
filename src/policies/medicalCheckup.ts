@@ -7,6 +7,13 @@ import type {
   PatientGender,
 } from "../schemas/medicalCheckup";
 
+type ProcessedMedicalCheckupValue = {
+  // 빈 값을 0으로 표기해서는 안되므로 number 대신 string으로 설정
+  level: string | Record<string, string | undefined>;
+  unit?: string;
+  evaluation?: MedicalCheckupEvaluation;
+};
+
 const separateMedicalCheckupReferences = <References extends Pick<MedicalCheckupReference, "refType">>(
   references: References[],
 ) => {
@@ -31,11 +38,11 @@ export const getMedicalCheckupHeight = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.height;
-  const level = Number(height);
+  const level = height.trim() || "-";
   return {
     level,
     unit,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 몸무게 정보 가공 함수 */
@@ -45,11 +52,11 @@ export const getMedicalCheckupWeight = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.weight;
-  const level = Number(weight);
+  const level = weight.trim() || "-";
   return {
     level,
     unit,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 허리둘레 정보 가공 함수 */
@@ -60,30 +67,34 @@ export const getMedicalCheckupWaist = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.waist;
-  const level = Number(waist);
+  const level = waist.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    const condition = gender === "male" ? level < 90 : level < 85;
-    return condition ? "질환의심" : "정상(A)";
+    const value = Number(waist);
+    if (gender === "male" ? value < 90 : value < 85) {
+      return "질환의심";
+    }
+    return "정상(A)";
   })();
   return {
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** BMI 정보 가공 함수 */
 export const getMedicalCheckupBMI = (bmi: string, references: Pick<MedicalCheckupReference, "refType" | "BMI">[]) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.BMI;
-  const level = Number(bmi);
+  const level = bmi.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 30) {
+    const value = Number(bmi);
+    if (value >= 30) {
       return "질환의심";
     }
-    if (level >= 25 || level < 18.5) {
+    if (value >= 25 || value < 18.5) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -92,7 +103,7 @@ export const getMedicalCheckupBMI = (bmi: string, references: Pick<MedicalChecku
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 시력 정보 가공 함수 */
@@ -100,11 +111,10 @@ export const getMedicalCheckupVision = (
   vision: string,
   // references: Pick<MedicalCheckupReference, "refType" | "vision">[],
 ) => {
-  const [left, right] = vision.trim().split("/");
+  const [left = "-", right = "-"] = vision.trim().split("/");
   return {
-    left,
-    right,
-  };
+    level: { left, right },
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 청력 정보 가공 함수 */
@@ -112,11 +122,10 @@ export const getMedicalCheckupHearing = (
   hearing: string,
   // references: Pick<MedicalCheckupReference, "refType" | "hearing">[],
 ) => {
-  const [left, right] = hearing.trim().split("/");
+  const [left = "-", right = "-"] = hearing.trim().split("/");
   return {
-    left,
-    right,
-  };
+    level: { left, right },
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 혈압 정보 가공 함수 */
@@ -126,25 +135,26 @@ export const getMedicalCheckupBloodPressure = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.bloodPressure;
-  const [systolic = 0, diastolic = 0] = bloodPressure.trim().split("/");
-  const systolicLevel = Number(systolic);
-  const diastolicLevel = Number(diastolic);
+  const [systolic = "-", diastolic = "-"] = bloodPressure.trim().split("/");
+  const systolicLevel = systolic.trim() || "-";
+  const diastolicLevel = diastolic.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (systolicLevel >= 140 || diastolicLevel >= 90) {
+    const systolicValue = Number(systolic);
+    const diastolicValue = Number(diastolic);
+    if (systolicValue >= 140 || diastolicValue >= 90) {
       return "질환의심";
     }
-    if (systolicLevel >= 120 || diastolicLevel >= 80) {
+    if (systolicValue >= 120 || diastolicValue >= 80) {
       return "정상(B)";
     }
     return "정상(A)";
   })();
   return {
-    systolic: systolicLevel,
-    diastolic: diastolicLevel,
+    level: { systolic: systolicLevel, diastolic: diastolicLevel },
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 단백뇨 정보 가공 함수 */
@@ -165,7 +175,7 @@ export const getMedicalCheckupProteinuria = (
   return {
     level: proteinuria,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 혈색소 정보 가공 함수 */
@@ -176,15 +186,14 @@ export const getMedicalCheckupHemoglobin = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.hemoglobin;
-  const level = Number(hemoglobin);
+  const level = hemoglobin.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    const condition1 = gender === "male" ? level < 12 : level < 10;
-    const condition2 = gender === "male" ? level < 13 : level < 12;
-    if (condition1) {
+    const value = Number(hemoglobin);
+    if (gender === "male" ? value < 12 : value < 10) {
       return "질환의심";
     }
-    if (condition2) {
+    if (gender === "male" ? value < 13 : value < 12) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -193,7 +202,7 @@ export const getMedicalCheckupHemoglobin = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 혈당 정보 가공 함수 */
@@ -203,13 +212,14 @@ export const getMedicalCheckupFastingBloodGlucose = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.fastingBloodGlucose;
-  const level = Number(fastingBloodGlucose);
+  const level = fastingBloodGlucose.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 126) {
+    const value = Number(fastingBloodGlucose);
+    if (value >= 126) {
       return "질환의심";
     }
-    if (level >= 100) {
+    if (value >= 100) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -218,7 +228,7 @@ export const getMedicalCheckupFastingBloodGlucose = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 총 콜레스테롤 정보 가공 함수 */
@@ -228,13 +238,14 @@ export const getMedicalCheckupTotalCholesterol = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.totalCholesterol;
-  const level = Number(totalCholesterol);
+  const level = totalCholesterol.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 240) {
+    const value = Number(totalCholesterol);
+    if (value >= 240) {
       return "질환의심";
     }
-    if (level >= 200) {
+    if (value >= 200) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -243,7 +254,7 @@ export const getMedicalCheckupTotalCholesterol = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** HDL 콜레스테롤 정보 가공 함수 */
@@ -253,13 +264,14 @@ export const getMedicalCheckupHDLCholesterol = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.HDLCholesterol;
-  const level = Number(hdlCholesterol);
+  const level = hdlCholesterol.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level < 40) {
+    const value = Number(hdlCholesterol);
+    if (value < 40) {
       return "질환의심";
     }
-    if (level < 60) {
+    if (value < 60) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -268,7 +280,7 @@ export const getMedicalCheckupHDLCholesterol = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** LDL 콜레스테롤 정보 가공 함수 */
@@ -278,13 +290,14 @@ export const getMedicalCheckupLDLCholesterol = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.LDLCholesterol;
-  const level = Number(ldlCholesterol);
+  const level = ldlCholesterol.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 160) {
+    const value = Number(ldlCholesterol);
+    if (value >= 160) {
       return "질환의심";
     }
-    if (level >= 130) {
+    if (value >= 130) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -293,7 +306,7 @@ export const getMedicalCheckupLDLCholesterol = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 중성지방 정보 가공 함수 */
@@ -303,13 +316,14 @@ export const getMedicalCheckupTriglyceride = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.triglyceride;
-  const level = Number(triglyceride);
+  const level = triglyceride.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 200) {
+    const value = Number(triglyceride);
+    if (value >= 200) {
       return "질환의심";
     }
-    if (level >= 150) {
+    if (value >= 150) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -318,7 +332,7 @@ export const getMedicalCheckupTriglyceride = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 혈청크레아티닌 정보 가공 함수 */
@@ -328,10 +342,11 @@ export const getMedicalCheckupSerumCreatinine = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.serumCreatinine;
-  const level = Number(serumCreatinine);
+  const level = serumCreatinine.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 1.6) {
+    const value = Number(serumCreatinine);
+    if (value >= 1.6) {
       return "질환의심";
     }
     return "정상(A)";
@@ -340,17 +355,18 @@ export const getMedicalCheckupSerumCreatinine = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 신사구체여과율(GFR) 정보 가공 함수 */
 export const getMedicalCheckupGFR = (gfr: string, references: Pick<MedicalCheckupReference, "refType" | "GFR">[]) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.GFR;
-  const level = Number(gfr);
+  const level = gfr.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level < 60) {
+    const value = Number(gfr);
+    if (value < 60) {
       return "질환의심";
     }
     return "정상(A)";
@@ -359,20 +375,21 @@ export const getMedicalCheckupGFR = (gfr: string, references: Pick<MedicalChecku
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** AST(SGOT) 정보 가공 함수 */
 export const getMedicalCheckupAST = (ast: string, references: Pick<MedicalCheckupReference, "refType" | "AST">[]) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.AST;
-  const level = Number(ast);
+  const level = ast.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 51) {
+    const value = Number(ast);
+    if (value >= 51) {
       return "질환의심";
     }
-    if (level >= 41) {
+    if (value >= 41) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -381,19 +398,21 @@ export const getMedicalCheckupAST = (ast: string, references: Pick<MedicalChecku
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
+
 /** ALT(SGPT) 정보 가공 함수 */
 export const getMedicalCheckupALT = (alt: string, references: Pick<MedicalCheckupReference, "refType" | "ALT">[]) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.ALT;
-  const level = Number(alt);
+  const level = alt.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    if (level >= 46) {
+    const value = Number(alt);
+    if (value >= 46) {
       return "질환의심";
     }
-    if (level >= 36) {
+    if (value >= 36) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -413,15 +432,14 @@ export const getMedicalCheckupYGPT = (
 ) => {
   const { unitReference } = separateMedicalCheckupReferences(references);
   const unit = unitReference.yGPT;
-  const level = Number(yGPT);
+  const level = yGPT.trim() || "-";
   /** @todo evaluationReferences 문자열을 가공해서 활용하도록 리팩토링 */
   const evaluation: MedicalCheckupEvaluation = (() => {
-    const condition1 = gender === "male" ? level >= 78 : level >= 46;
-    const condition2 = gender === "male" ? level >= 64 : level >= 36;
-    if (condition1) {
+    const value = Number(yGPT);
+    if (gender === "male" ? value >= 78 : value >= 46) {
       return "질환의심";
     }
-    if (condition2) {
+    if (gender === "male" ? value >= 64 : value >= 36) {
       return "정상(B)";
     }
     return "정상(A)";
@@ -430,7 +448,7 @@ export const getMedicalCheckupYGPT = (
     level,
     unit,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 흉부질환 정보 가공 함수 */
@@ -448,7 +466,7 @@ export const getMedicalCheckupChestXrayResult = (
   return {
     level: chestXrayResult,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };
 
 /** 골다공증 정보 가공 함수 */
@@ -469,5 +487,5 @@ export const getMedicalCheckupOsteoporosis = (
   return {
     level: osteoporosis,
     evaluation,
-  };
+  } satisfies ProcessedMedicalCheckupValue;
 };

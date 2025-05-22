@@ -151,12 +151,12 @@ export function MedicalCheckResult(props: MedicalCheckResultProps) {
         <MetricCard
           className="mb-4 break-inside-avoid"
           name="시력 (좌/우)"
-          level={`${vision.left} / ${vision.right}`}
+          level={`${vision.level.left} / ${vision.level.right}`}
         />
         <MetricCard
           className="mb-4 break-inside-avoid"
           name="청력 (좌/우)"
-          level={`${hearing.left} / ${hearing.right}`}
+          level={`${hearing.level.left} / ${hearing.level.right}`}
         />
         <MetricCard
           className="mb-4 break-inside-avoid"
@@ -172,7 +172,7 @@ export function MedicalCheckResult(props: MedicalCheckResultProps) {
         <MetricCard
           className="mb-4 break-inside-avoid"
           name="혈압 (수축기/이완기)"
-          level={`${bloodPressure.systolic} / ${bloodPressure.diastolic}`}
+          level={`${bloodPressure.level.systolic} / ${bloodPressure.level.diastolic}`}
           unit={bloodPressure.unit}
           evaluation={bloodPressure.evaluation}
         />
