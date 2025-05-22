@@ -15,6 +15,9 @@ export default defineConfig({
     }),
     react(),
   ],
+  build: {
+    target: "es2022",
+  },
   server: {
     proxy: {
       "/candiy-api": {
