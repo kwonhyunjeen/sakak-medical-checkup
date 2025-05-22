@@ -1,9 +1,4 @@
 import { useState } from "react";
-import { Paper } from "../components/ui/Paper";
-import { MetricCard } from "../components/ui/MetricCard";
-import { Tabs, TabsTrigger } from "../components/ui/Tabs";
-import { Badge } from "../components/ui/Badge";
-import type { MedialCheckupInfo, MedicalCheckupResult, PatientGender } from "../schemas/medicalCheckup";
 import {
   getMedicalCheckupHeight,
   getMedicalCheckupWeight,
@@ -26,7 +21,12 @@ import {
   getMedicalCheckupYGPT,
   getMedicalCheckupChestXrayResult,
   getMedicalCheckupOsteoporosis,
-} from "../policies/medicalCheckup";
+} from "../../policies/medicalCheckup";
+import type { MedialCheckupInfo, MedicalCheckupResult, PatientGender } from "../../schemas/medicalCheckup";
+import { Badge } from "../ui/Badge";
+import { MetricCard } from "../ui/MetricCard";
+import { Paper } from "../ui/Paper";
+import { Tabs, TabsTrigger } from "../ui/Tabs";
 
 type MedicalCheckResultProps = {
   medicalCheckupInfo: MedialCheckupInfo;

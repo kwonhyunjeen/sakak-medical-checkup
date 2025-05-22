@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { MedicalCheckupInquiry } from "./feature/MedicalCheckInquiry";
+import { MedicalCheckupInquiry } from "./components/feature/MedicalCheckInquiry";
+import { MedicalCheckResult } from "./components/feature/MedicalCheckResult";
 import type { MedialCheckupInfo } from "./schemas/medicalCheckup";
-import { MedicalCheckResult } from "./feature/MedicalCheckResult";
 
 type FormStep = {
   type: "form";

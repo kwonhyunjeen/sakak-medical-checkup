@@ -1,16 +1,16 @@
-import { requestMultiFactorAuth } from "../apis/requestMultiFactorAuth";
-import { getMedicalCheckup } from "../apis/getMedicalCheckup";
-import { TextField } from "../components/ui/TextField";
-import { Select, SelectOption } from "../components/ui/Select";
-import { Button } from "../components/ui/Button";
-import { Alert } from "../components/ui/Alert";
-import { Dialog } from "../components/ui/Dialog";
 import { startTransition, useActionState, useState } from "react";
-import type { APIErrorResponse } from "../schemas/api";
-import type { LoginTypeLevel, Telecom } from "../schemas/auth";
 import { useForm } from "react-hook-form";
-import type { MedialCheckupInfo } from "../schemas/medicalCheckup";
-import { Paper } from "../components/ui/Paper";
+import { getMedicalCheckup } from "../../apis/getMedicalCheckup";
+import { requestMultiFactorAuth } from "../../apis/requestMultiFactorAuth";
+import type { APIErrorResponse } from "../../schemas/api";
+import type { LoginTypeLevel, Telecom } from "../../schemas/auth";
+import type { MedialCheckupInfo } from "../../schemas/medicalCheckup";
+import { Alert } from "../ui/Alert";
+import { Button } from "../ui/Button";
+import { Dialog } from "../ui/Dialog";
+import { Paper } from "../ui/Paper";
+import { Select, SelectOption } from "../ui/Select";
+import { TextField } from "../ui/TextField";
 
 type MedicalCheckupInquiryProps = {
   onComplete?: (result: MedialCheckupInfo) => void;
@@ -120,7 +120,7 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
 
   return (
     <Paper className="max-w-lg p-6">
-      <h1 className="mb-4 text-2xl font-semibold">건강검진 조회</h1>
+      <h1 className="mb-4 text-2xl font-semibold">건강검진 결과 조회</h1>
       {mfaResponse?.status === "error" && (
         <Alert variant="error" className="mb-6">
           {mfaResponse.message}
