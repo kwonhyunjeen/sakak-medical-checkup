@@ -66,6 +66,7 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
   const startYear = watch("startDate");
 
   const [mfaDialogOpen, setMFADialogOpen] = useState(false);
+  const [mfaDialogAlertMessage, setMFADialogAlertMessage] = useState("");
 
   const [mfaResponse, dispatchMFA, isMFAPending] = useActionState(async () => {
     try {
@@ -80,7 +81,7 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
     }
   }, undefined);
 
-  const [medicalCheckupResponse, dispatchMedicalCheckup, isMedicalCheckupPending] = useActionState(async () => {
+  const [, dispatchMedicalCheckup, isMedicalCheckupPending] = useActionState(async () => {
     try {
       if (mfaResponse?.status !== "success") {
         throw {
@@ -98,6 +99,7 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
       onComplete?.(response.data);
       return response;
     } catch (error) {
+      setMFADialogAlertMessage((error as APIErrorResponse).message);
       return error as APIErrorResponse;
     }
   }, undefined);
@@ -119,8 +121,11 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
   return (
     <Paper className="max-w-lg p-6">
       <h1 className="mb-4 text-2xl font-semibold">건강검진 조회</h1>
-      {mfaResponse?.status === "error" && <Alert variant="error">{mfaResponse.message}</Alert>}
-      {medicalCheckupResponse?.status === "error" && <Alert variant="error">{medicalCheckupResponse.message}</Alert>}
+      {mfaResponse?.status === "error" && (
+        <Alert variant="error" className="mb-6">
+          {mfaResponse.message}
+        </Alert>
+      )}
       <form onSubmit={handleSubmit(handleMFAFormSubmit)}>
         <fieldset className="flex flex-col gap-1">
           <TextField
@@ -221,9 +226,20 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
             조회하기
           </Button>
         </div>
-        <Dialog open={mfaDialogOpen} onClose={() => setMFADialogOpen(false)}>
+        <Dialog
+          open={mfaDialogOpen}
+          onClose={() => {
+            setMFADialogOpen(false);
+            setMFADialogAlertMessage("");
+          }}
+        >
           {() => (
             <>
+              {mfaDialogAlertMessage.trim() && (
+                <Alert variant="error" className="mb-6">
+                  {mfaDialogAlertMessage}
+                </Alert>
+              )}
               <p>간편 인증을 마치고, 인증 완료 버튼을 눌러주세요.</p>
               <Button
                 variant="primary"

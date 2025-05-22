@@ -30,5 +30,9 @@ export const requestMultiFactorAuth = async (
       isContinue: "0", // Cancel
     }),
   });
-  return (await response.json()) as RequestMultiFactorAuthAPIResponseBody;
+  const json = await response.json();
+  if (!response.ok) {
+    throw json;
+  }
+  return json;
 };

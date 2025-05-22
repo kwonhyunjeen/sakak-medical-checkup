@@ -31,5 +31,9 @@ export const getMedicalCheckup = async (
       isContinue: "1", // OK
     }),
   });
-  return (await response.json()) as GetMedicalCheckupAPIResponseBody;
+  const json = await response.json();
+  if (!response.ok) {
+    throw json;
+  }
+  return json;
 };
