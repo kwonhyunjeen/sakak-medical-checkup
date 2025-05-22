@@ -10,6 +10,7 @@ import type { APIErrorResponse } from "../schemas/api";
 import type { LoginTypeLevel, Telecom } from "../schemas/auth";
 import { useForm } from "react-hook-form";
 import type { MedialCheckupInfo } from "../schemas/medicalCheckup";
+import { Paper } from "../components/ui/Paper";
 
 type MedicalCheckupInquiryProps = {
   onComplete?: (result: MedialCheckupInfo) => void;
@@ -116,111 +117,117 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
   };
 
   return (
-    <div className="mx-auto max-w-sm p-4">
+    <Paper className="max-w-lg p-6">
+      <h1 className="mb-4 text-2xl font-semibold">건강검진 조회</h1>
       {mfaResponse?.status === "error" && <Alert variant="error">{mfaResponse.message}</Alert>}
       {medicalCheckupResponse?.status === "error" && <Alert variant="error">{medicalCheckupResponse.message}</Alert>}
       <form onSubmit={handleSubmit(handleMFAFormSubmit)}>
-        <TextField
-          label="이름"
-          placeholder="홍길동"
-          {...register("legalName", {
-            required: "이름을 입력해주세요.",
-            validate: (value) => {
-              const isValid = /^[가-힣a-zA-Z]{2,20}$/.test(value);
-              return isValid || "2~20자의 한글 또는 영문으로 입력해주세요.";
-            },
-          })}
-          error={errors.legalName?.message}
-        />
-        <TextField
-          label="생년월일"
-          placeholder="YYYYMMDD"
-          inputMode="numeric"
-          {...register("birthdate", {
-            required: "생년월일을 입력해주세요.",
-            pattern: {
-              value: /^\d{8}$/,
-              message: "YYYYMMDD 형식의 8자리 숫자로 입력해주세요.",
-            },
-          })}
-          error={errors.birthdate?.message}
-        />
-        <TextField
-          label="휴대폰 번호"
-          placeholder="'-' 없이 번호만 입력"
-          inputMode="numeric"
-          {...register("phoneNo", {
-            required: "휴대폰 번호를 입력해주세요.",
-            pattern: {
-              value: /^\d{10,11}$/,
-              message: "'-' 없이 10~11자리 숫자로 입력해주세요.",
-            },
-          })}
-          error={errors.phoneNo?.message}
-        />
-        <Select label="통신사" {...register("telecom", { required: true })} error={errors.telecom?.message}>
-          <SelectOption value="1">SKT (SKT 알뜰폰)</SelectOption>
-          <SelectOption value="2">KT (KT 알뜰폰)</SelectOption>
-          <SelectOption value="3">LG U+ (LG U+ 알뜰폰)</SelectOption>
-        </Select>
-        <Select
-          label="조회 시작 년도"
-          {...register("startDate", { required: "조회 시작 년도를 선택해주세요." })}
-          error={errors.startDate?.message}
-        >
-          {yearOptions.map((year) => (
-            <SelectOption key={year} value={year}>
-              {year}
-            </SelectOption>
-          ))}
-        </Select>
-        <Select
-          label="조회 종료 년도"
-          {...register("endDate", {
-            required: "조회 종료 년도를 선택해주세요.",
-            validate: (endYear) => {
-              if (!startYear) return true;
-              return (
-                Number.parseInt(endYear) >= Number.parseInt(startYear) ||
-                "조회 종료 년도는 조회 시작 년도보다 같거나 이후여야 합니다."
-              );
-            },
-          })}
-          error={errors.endDate?.message}
-        >
-          {yearOptions.map((year) => (
-            <SelectOption key={year} value={year}>
-              {year}
-            </SelectOption>
-          ))}
-        </Select>
-        <Select
-          label="간편 인증"
-          {...register("loginTypeLevel", { required: true })}
-          error={errors.loginTypeLevel?.message}
-        >
-          <SelectOption value="1">카카오톡</SelectOption>
-          <SelectOption value="2">페이코</SelectOption>
-          <SelectOption value="3">삼성패스</SelectOption>
-          <SelectOption value="4">국민은행(국민인증서)</SelectOption>
-          <SelectOption value="5">통신사(PASS)</SelectOption>
-          <SelectOption value="6">네이버</SelectOption>
-          <SelectOption value="7">신한은행(신한인증서)</SelectOption>
-          <SelectOption value="8">토스</SelectOption>
-          <SelectOption value="9">뱅크샐러드</SelectOption>
-          <SelectOption value="10">하나은행(하나인증서)</SelectOption>
-          <SelectOption value="11">NH모바일인증서</SelectOption>
-        </Select>
-        <Button type="submit" variant="primary" loading={isMFAPending} disabled={!isDirty}>
-          건강검진 조회
-        </Button>
+        <fieldset className="flex flex-col gap-1">
+          <TextField
+            label="이름"
+            placeholder="홍길동"
+            {...register("legalName", {
+              required: "이름을 입력해주세요.",
+              validate: (value) => {
+                const isValid = /^[가-힣a-zA-Z]{2,20}$/.test(value);
+                return isValid || "2~20자의 한글 또는 영문으로 입력해주세요.";
+              },
+            })}
+            error={errors.legalName?.message}
+            autoFocus
+          />
+          <TextField
+            label="생년월일"
+            placeholder="YYYYMMDD"
+            inputMode="numeric"
+            {...register("birthdate", {
+              required: "생년월일을 입력해주세요.",
+              pattern: {
+                value: /^\d{8}$/,
+                message: "YYYYMMDD 형식의 8자리 숫자로 입력해주세요.",
+              },
+            })}
+            error={errors.birthdate?.message}
+          />
+          <TextField
+            label="휴대폰 번호"
+            placeholder="'-' 없이 번호만 입력"
+            inputMode="numeric"
+            {...register("phoneNo", {
+              required: "휴대폰 번호를 입력해주세요.",
+              pattern: {
+                value: /^\d{10,11}$/,
+                message: "'-' 없이 10~11자리 숫자로 입력해주세요.",
+              },
+            })}
+            error={errors.phoneNo?.message}
+          />
+          <Select label="통신사" {...register("telecom", { required: true })} error={errors.telecom?.message}>
+            <SelectOption value="1">SKT (SKT 알뜰폰)</SelectOption>
+            <SelectOption value="2">KT (KT 알뜰폰)</SelectOption>
+            <SelectOption value="3">LG U+ (LG U+ 알뜰폰)</SelectOption>
+          </Select>
+          <Select
+            label="조회 시작 년도"
+            {...register("startDate", { required: "조회 시작 년도를 선택해주세요." })}
+            error={errors.startDate?.message}
+          >
+            {yearOptions.map((year) => (
+              <SelectOption key={year} value={year}>
+                {year}
+              </SelectOption>
+            ))}
+          </Select>
+          <Select
+            label="조회 종료 년도"
+            {...register("endDate", {
+              required: "조회 종료 년도를 선택해주세요.",
+              validate: (endYear) => {
+                if (!startYear) return true;
+                return (
+                  Number.parseInt(endYear) >= Number.parseInt(startYear) ||
+                  "조회 종료 년도는 조회 시작 년도보다 같거나 이후여야 합니다."
+                );
+              },
+            })}
+            error={errors.endDate?.message}
+          >
+            {yearOptions.map((year) => (
+              <SelectOption key={year} value={year}>
+                {year}
+              </SelectOption>
+            ))}
+          </Select>
+          <Select
+            label="간편 인증"
+            {...register("loginTypeLevel", { required: true })}
+            error={errors.loginTypeLevel?.message}
+          >
+            <SelectOption value="1">카카오톡</SelectOption>
+            <SelectOption value="2">페이코</SelectOption>
+            <SelectOption value="3">삼성패스</SelectOption>
+            <SelectOption value="4">국민은행(국민인증서)</SelectOption>
+            <SelectOption value="5">통신사(PASS)</SelectOption>
+            <SelectOption value="6">네이버</SelectOption>
+            <SelectOption value="7">신한은행(신한인증서)</SelectOption>
+            <SelectOption value="8">토스</SelectOption>
+            <SelectOption value="9">뱅크샐러드</SelectOption>
+            <SelectOption value="10">하나은행(하나인증서)</SelectOption>
+            <SelectOption value="11">NH모바일인증서</SelectOption>
+          </Select>
+        </fieldset>
+        <div className="mt-5">
+          <Button type="submit" variant="primary" loading={isMFAPending} disabled={!isDirty}>
+            조회하기
+          </Button>
+        </div>
         <Dialog open={mfaDialogOpen} onClose={() => setMFADialogOpen(false)}>
           {() => (
             <>
               <p>간편 인증을 마치고, 인증 완료 버튼을 눌러주세요.</p>
               <Button
                 variant="primary"
-                className="mt-4"
+                className="mt-5"
                 loading={isMedicalCheckupPending}
                 onClick={handleMFACompleteClick}
               >
@@ -230,6 +237,6 @@ export function MedicalCheckupInquiry(props: MedicalCheckupInquiryProps) {
           )}
         </Dialog>
       </form>
-    </div>
+    </Paper>
   );
 }

@@ -20,7 +20,7 @@ function App() {
   const [step, setStep] = useState<Step>({ type: "form" });
 
   return (
-    <>
+    <div className="mx-auto max-w-3xl p-8">
       {step.type === "form" && (
         <MedicalCheckupInquiry
           onComplete={(result) =>
@@ -32,7 +32,7 @@ function App() {
         />
       )}
       {step.type === "result" && <MedicalCheckResult medicalCheckupInfo={step.data.medicalCheckupInfo} />}
-    </>
+    </div>
   );
 }
 

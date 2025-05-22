@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Card } from "../components/ui/Card";
+import { Paper } from "../components/ui/Paper";
 import { MetricCard } from "../components/ui/MetricCard";
+import { Tabs, TabsTrigger } from "../components/ui/Tabs";
+import { Badge } from "../components/ui/Badge";
 import type { MedialCheckupInfo, MedicalCheckupResult, PatientGender } from "../schemas/medicalCheckup";
 import {
   getMedicalCheckupHeight,
@@ -110,109 +112,200 @@ export function MedicalCheckResult(props: MedicalCheckResultProps) {
   const osteoporosis = getMedicalCheckupOsteoporosis(healthData.osteoporosis);
 
   return (
-    <div className="mx-auto max-w-md p-4">
+    <>
       {/* 년도 선택 탭 */}
       {years.length > 1 && (
-        <div className="tabs-boxed tabs mb-6 flex-wrap">
-          {years.map((year) => (
-            <button
-              key={year}
-              onClick={() => setSelectedYear(year)}
-              className={`tab ${year === selectedYear ? "tab-active" : ""}`}
-            >
-              {year}년
-            </button>
-          ))}
-        </div>
+        <Paper className="mb-8 p-2">
+          <Tabs>
+            {years.map((year) => (
+              <TabsTrigger key={year} selected={year === selectedYear} onClick={() => setSelectedYear(year)}>
+                {year}년
+              </TabsTrigger>
+            ))}
+          </Tabs>
+        </Paper>
       )}
 
-      <div className="mb-8">
-        <h2 className="mb-2 text-2xl font-bold">
+      <div className="mb-6 p-1">
+        <h2 className="mb-2 text-3xl font-semibold">
           {patientName}님의 {selectedYear}년 건강검진 결과
         </h2>
-        <div className="badge badge-outline badge-lg mr-2">검진일: {formattedCheckupDate}</div>
-        <div className="badge badge-outline badge-lg">검진기관: {organizationName}</div>
-        <div className="badge badge-outline badge-lg">판정: {healthData.evaluation}</div>
+        <div className="flex flex-wrap gap-2">
+          <Badge>검진일: {formattedCheckupDate}</Badge>
+          <Badge>검진기관: {organizationName}</Badge>
+          <Badge>판정: {healthData.evaluation}</Badge>
+        </div>
       </div>
 
-      <h3>신체계측</h3>
-      <Card className="w-full" heading="신장/체중">
-        {height.level}
-        {height.unit} / {weight.level}
-        {weight.unit}
-      </Card>
-      <MetricCard heading="허리둘레" level={waist.level} unit={waist.unit} evaluation={waist.evaluation} />
-      <MetricCard heading="시력 (좌/우)" level={`${vision.left} / ${vision.right}`} />
-      <MetricCard heading="청력 (좌/우)" level={`${hearing.left} / ${hearing.right}`} />
-      <MetricCard heading="체질량지수" level={bmi.level} unit={bmi.unit} evaluation={bmi.evaluation} />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">신체계측</h3>
+      <div className="columns-1 gap-4 sm:columns-2">
+        <MetricCard className="mb-4 break-inside-avoid" name="신장" level={height.level} unit={height.unit} />
+        <MetricCard className="mb-4 break-inside-avoid" name="체중" level={weight.level} unit={weight.unit} />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="허리둘레"
+          level={waist.level}
+          unit={waist.unit}
+          evaluation={waist.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="시력 (좌/우)"
+          level={`${vision.left} / ${vision.right}`}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="청력 (좌/우)"
+          level={`${hearing.left} / ${hearing.right}`}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="체질량지수"
+          level={bmi.level}
+          unit={bmi.unit}
+          evaluation={bmi.evaluation}
+        />
+      </div>
 
-      <h3>고혈압 등</h3>
-      <MetricCard
-        heading="혈압 (수축기/이완기)"
-        level={`${bloodPressure.systolic} / ${bloodPressure.diastolic}`}
-        unit={bloodPressure.unit}
-        evaluation={bloodPressure.evaluation}
-      />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">고혈압 등</h3>
+      <div className="columns-1 gap-4">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="혈압 (수축기/이완기)"
+          level={`${bloodPressure.systolic} / ${bloodPressure.diastolic}`}
+          unit={bloodPressure.unit}
+          evaluation={bloodPressure.evaluation}
+        />
+      </div>
 
-      <h3>빈혈 등</h3>
-      <MetricCard heading="혈색소" level={hemoglobin.level} unit={hemoglobin.unit} evaluation={hemoglobin.evaluation} />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">빈혈 등</h3>
+      <div className="columns-1 gap-4">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="혈색소"
+          level={hemoglobin.level}
+          unit={hemoglobin.unit}
+          evaluation={hemoglobin.evaluation}
+        />
+      </div>
 
-      <h3>당뇨병</h3>
-      <MetricCard
-        heading="공복혈당"
-        level={fastingBloodGlucose.level}
-        unit={fastingBloodGlucose.unit}
-        evaluation={fastingBloodGlucose.evaluation}
-      />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">당뇨병</h3>
+      <div className="columns-1 gap-4">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="공복혈당"
+          level={fastingBloodGlucose.level}
+          unit={fastingBloodGlucose.unit}
+          evaluation={fastingBloodGlucose.evaluation}
+        />
+      </div>
 
-      <h3>콜레스테롤</h3>
-      <MetricCard
-        heading="총 콜레스테롤"
-        level={totalCholesterol.level}
-        unit={totalCholesterol.unit}
-        evaluation={totalCholesterol.evaluation}
-      />
-      <MetricCard
-        heading="HDL-C"
-        level={hdlCholesterol.level}
-        unit={hdlCholesterol.unit}
-        evaluation={hdlCholesterol.evaluation}
-      />
-      <MetricCard
-        heading="LDL-C"
-        level={ldlCholesterol.level}
-        unit={ldlCholesterol.unit}
-        evaluation={ldlCholesterol.evaluation}
-      />
-      <MetricCard
-        heading="중성지방"
-        level={triglyceride.level}
-        unit={triglyceride.unit}
-        evaluation={triglyceride.evaluation}
-      />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">콜레스테롤</h3>
+      <div className="columns-1 gap-4 sm:columns-2">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="총 콜레스테롤"
+          level={totalCholesterol.level}
+          unit={totalCholesterol.unit}
+          evaluation={totalCholesterol.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="HDL-C"
+          level={hdlCholesterol.level}
+          unit={hdlCholesterol.unit}
+          evaluation={hdlCholesterol.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="LDL-C"
+          level={ldlCholesterol.level}
+          unit={ldlCholesterol.unit}
+          evaluation={ldlCholesterol.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="중성지방"
+          level={triglyceride.level}
+          unit={triglyceride.unit}
+          evaluation={triglyceride.evaluation}
+        />
+      </div>
 
-      <h3>간장질환</h3>
-      <MetricCard heading="AST(SGOT)" level={ast.level} unit={ast.unit} evaluation={ast.evaluation} />
-      <MetricCard heading="ALT(SGPT)" level={alt.level} unit={alt.unit} evaluation={alt.evaluation} />
-      <MetricCard heading="감마지피티(y-GPT)" level={yGPT.level} unit={yGPT.unit} evaluation={yGPT.evaluation} />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">간장질환</h3>
+      <div className="columns-1 gap-4 sm:columns-2">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="AST(SGOT)"
+          level={ast.level}
+          unit={ast.unit}
+          evaluation={ast.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="ALT(SGPT)"
+          level={alt.level}
+          unit={alt.unit}
+          evaluation={alt.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="감마지피티(y-GPT)"
+          level={yGPT.level}
+          unit={yGPT.unit}
+          evaluation={yGPT.evaluation}
+        />
+      </div>
 
-      <h3>신장질환</h3>
-      <MetricCard heading="요단백" level={proteinuria.level} evaluation={proteinuria.evaluation} />
-      <MetricCard heading="신사구체여과율(GFR)" level={gfr.level} unit={gfr.unit} evaluation={gfr.evaluation} />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">신장질환</h3>
+      <div className="columns-1 gap-4 sm:columns-2">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="요단백"
+          level={proteinuria.level}
+          evaluation={proteinuria.evaluation}
+        />
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="신사구체여과율(GFR)"
+          level={gfr.level}
+          unit={gfr.unit}
+          evaluation={gfr.evaluation}
+        />
+      </div>
 
-      <h3>만성신장질환</h3>
-      <MetricCard
-        heading="혈청크레아티닌"
-        level={serumCreatinine.level}
-        unit={serumCreatinine.unit}
-        evaluation={serumCreatinine.evaluation}
-      />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">만성신장질환</h3>
+      <div className="columns-1 gap-4">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="혈청크레아티닌"
+          level={serumCreatinine.level}
+          unit={serumCreatinine.unit}
+          evaluation={serumCreatinine.evaluation}
+        />
+      </div>
 
-      <h3>페결핵 / 흉부질환</h3>
-      <MetricCard heading="흉부방사선검사" level={chestXrayResult.level} evaluation={chestXrayResult.evaluation} />
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">페결핵 / 흉부질환</h3>
+      <div className="columns-1 gap-4">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="흉부방사선검사"
+          level={chestXrayResult.level}
+          evaluation={chestXrayResult.evaluation}
+        />
+      </div>
 
-      <h3>골밀도검사</h3>
-      <MetricCard heading="골다공증" level={osteoporosis.level} evaluation={osteoporosis.evaluation} />
-    </div>
+      <h3 className="mb-4 mt-10 text-2xl font-semibold">골밀도검사</h3>
+      <div className="columns-1 gap-4">
+        <MetricCard
+          className="mb-4 break-inside-avoid"
+          name="골다공증"
+          level={osteoporosis.level}
+          evaluation={osteoporosis.evaluation}
+        />
+      </div>
+
+      <div className="h-24" />
+    </>
   );
 }

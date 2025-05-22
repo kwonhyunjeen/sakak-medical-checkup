@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-export type TextFieldRef = HTMLInputElement;
+export type TextFieldRef = React.ComponentRef<"input">;
 export type TextFieldProps = React.ComponentPropsWithoutRef<"input"> & {
   label: string;
   description?: string;
