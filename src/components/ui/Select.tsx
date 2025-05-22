@@ -1,15 +1,15 @@
 import { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-type SelectRef = HTMLSelectElement;
-type SelectProps = React.ComponentPropsWithoutRef<"select"> & {
+export type SelectRef = HTMLSelectElement;
+export type SelectProps = React.ComponentPropsWithoutRef<"select"> & {
   label: string;
   description?: string;
   error?: string;
 };
 
-type SelectOptionRef = HTMLOptionElement;
-type SelectOptionProps = React.ComponentPropsWithoutRef<"option">;
+export type SelectOptionRef = HTMLOptionElement;
+export type SelectOptionProps = React.ComponentPropsWithoutRef<"option">;
 
 export const Select = forwardRef<SelectRef, SelectProps>((props, ref) => {
   const {

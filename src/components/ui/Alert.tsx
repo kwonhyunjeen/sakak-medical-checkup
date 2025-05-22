@@ -3,8 +3,8 @@ import { cn } from "../../utils/cn";
 
 type AlertVariant = "info" | "success" | "warning" | "error";
 
-type AlertRef = HTMLDivElement;
-type AlertProps = React.ComponentPropsWithoutRef<"div"> & {
+export type AlertRef = HTMLDivElement;
+export type AlertProps = React.ComponentPropsWithoutRef<"div"> & {
   variant?: AlertVariant;
   heading?: string;
   hideIcon?: boolean;

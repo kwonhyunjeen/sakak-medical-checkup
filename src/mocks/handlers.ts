@@ -8,7 +8,7 @@ import type { MultiFactorInfo } from "../schemas/auth";
 
 export const handlers = [
   http.post("http://localhost:5173/candiy-api/v1/nhis/checkup", async ({ request }) => {
-    await delay(2000);
+    await delay(1000);
 
     const body = (await request.json()) as
       | (RequestMultiFactorAuthAPIRequestBody & { isContinue: "0" })

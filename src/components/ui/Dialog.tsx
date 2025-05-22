@@ -3,8 +3,8 @@ import { cn } from "../../utils/cn";
 import { forkRef } from "../../utils/forkRef";
 import { createPortal } from "react-dom";
 
-type DialogRef = HTMLDialogElement;
-type DialogProps = Omit<React.ComponentPropsWithoutRef<"dialog">, "children"> & {
+export type DialogRef = HTMLDialogElement;
+export type DialogProps = Omit<React.ComponentPropsWithoutRef<"dialog">, "children"> & {
   // 컴포넌트를 다이얼로그가 열렸을 때 마운트하기 위해 children을 함수로 받음
   children?: () => React.ReactNode;
 };

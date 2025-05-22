@@ -3,8 +3,8 @@ import { cn } from "../../utils/cn";
 
 type ButtonVariant = "default" | "primary" | "error";
 
-type ButtonRef = HTMLButtonElement;
-type ButtonProps = React.ComponentPropsWithoutRef<"button"> & {
+export type ButtonRef = HTMLButtonElement;
+export type ButtonProps = React.ComponentPropsWithoutRef<"button"> & {
   variant?: ButtonVariant;
   loading?: boolean;
 };
